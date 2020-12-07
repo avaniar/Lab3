@@ -38,7 +38,12 @@ void Binaryheap::Heapify(int i)
 }
 void Binaryheap::insert(int newelement)
 {
-	int parrent=(heapsize-1)/2;
+	if (heapsize == maxsize)
+	{
+		heap = (int*)realloc(heap, (2 * maxsize + 1) * sizeof(int));//Increase the size of the array.
+		maxsize = (2 * maxsize + 1);
+	}
+	int parrent = (heapsize - 1) / 2;
 	heap[heapsize] = newelement;//Added a new element to the end.
 	Heapify(parrent);
 	heapsize++;
