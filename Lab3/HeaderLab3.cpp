@@ -71,51 +71,177 @@ Iterator* Binaryheap::create_bft_iterator()
 {
 	return new bft_iterator(heap, heapsize);
 }
+Binaryheap::Stack::Stack()
+{
+	reset_stack();
+	size = 0;
+}
 
+Binaryheap::Stack::~Stack()
+{
+	while (empty())
+	{
+		pop();
+	}
+}
+
+void Binaryheap::Stack::reset_stack()
+{
+	head = nullptr;
+	tail = nullptr;
+}
+
+void Binaryheap::Stack::push(int Newelement)
+{
+	if (size == 0)//We add the new element first.
+	{
+		head = new Element(Newelement);
+		tail = head;
+	}
+	else//We add the new element last.
+	{
+		Element* current = new Element(Newelement);
+		tail->next = current;
+		current->prev = tail;
+		tail = current;
+	}
+	size++;
+}
+
+void Binaryheap::Stack::pop()
+{
+	if (size == 0)return;//Exit the function.
+	if (size == 1)//We remove the first element and reset the list.
+	{
+		delete head;
+		reset_stack();
+	}
+	else
+	{
+		Element* current = tail->prev;
+		current->next = nullptr;
+		tail->prev = nullptr;
+		delete tail;
+		tail = current;
+	}
+	size--;
+}
+
+int Binaryheap::Stack::top()
+{
+	return tail->data;
+}
+
+bool Binaryheap::Stack::empty()
+{
+	if (size == NULL)
+		return false;
+	else
+		return true;
+}
 int Binaryheap::dft_iterator::next()
 {
-	int lastid = stack[last];
-	last--;
+	int lastid = stack.top();
+	stack.pop();
 	if ((2 * lastid + 2) < heapsize)
 	{
-		stack[last + 1] = 2 * lastid + 2;
-		last++;
+		stack.push(2 * lastid + 2);
 	}
 	if ((2 * lastid + 1) < heapsize)
 	{
-		stack[last + 1] = 2 * lastid + 1;
-		last++;
+		stack.push(2 * lastid + 1);
 	}
 	return current[lastid];
 }
 
 bool Binaryheap::dft_iterator::has_next()
 {
-	return (last >= 0);
+	return (stack.empty());
 }
 
 int Binaryheap::bft_iterator::next()
 {
-	int returned= current[queue[0]];
-	if ((2 * queue[0] + 1) < heapsize)
+	int returned= queue.front();
+	if ((2 * returned + 1) < heapsize)
 	{
-		queue[end + 1] =2 * queue[0] + 1;
-		end++;
+		queue.push(2 * returned + 1);
 	}
-	if ((2 * queue[0] + 2) < heapsize)
+	if ((2 * returned + 2) < heapsize)
 	{
-		queue[end + 1] = 2 * queue[0] + 2;
-		end++;
+		queue.push(2 * returned + 2);
 	}
-	for (int i = 0;i < end;i++)
-	{
-		queue[i] = queue[i + 1];
-	}
-	end--;
-	return returned;
+	queue.pop();
+	return current[returned];
 }
 
 bool Binaryheap::bft_iterator::has_next()
 {
-	return (end>=0);
+	return (queue.empty());
+}
+
+Binaryheap::Queue::Queue()
+{
+	reset_queue();
+	size = 0;
+}
+
+Binaryheap::Queue::~Queue()
+{
+	while (empty())
+	{
+		pop();
+	}
+}
+
+void Binaryheap::Queue::reset_queue()
+{
+	head = nullptr;
+	tail = nullptr;
+}
+
+void Binaryheap::Queue::push(int Newelement)
+{
+	if (size == 0)//We add the new element first.
+	{
+		head = new Element(Newelement);
+		tail = head;
+	}
+	else//We add the new element last.
+	{
+		Element* current = new Element(Newelement);
+		tail->next = current;
+		tail = current;
+	}
+	size++;
+}
+
+void Binaryheap::Queue::pop()
+{
+	if (size == 0) return;//Exit the function.
+	if (size == 1)//We remove the first element and reset the list.
+	{
+		delete head;
+		reset_queue();
+	}
+	else//We remove the first element
+	{
+		Element* current = head->next;
+		head->next = nullptr;
+		delete head;
+		head = current;
+	}
+	size--;
+}
+
+int Binaryheap::Queue::front()
+{
+	return head->data;
+}
+
+bool Binaryheap::Queue::empty()
+{
+	if (size == NULL)
+		return false;
+	else
+		return true;
 }

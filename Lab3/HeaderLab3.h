@@ -3,64 +3,110 @@
 class Binaryheap
 {
 private:
-	const int maxsize = 100;
+	int maxsize=1;
 	int* heap;
 	int heapsize;
 
 public:
 	Binaryheap();
-	bool contains(int); // поиск элемента в дереве по ключу
-	void insert(int); // добавление элемента в дерево по ключу. Должен работать за O(logN)
-	void remove(int); // удаление элемента дерева по ключу
-	Iterator *create_dft_iterator(); // создание итератора, реализующего один из методов обхода в глубину (depth-first traverse)
-	Iterator *create_bft_iterator(); // создание итератора, реализующего методы обхода в ширину (breadth-first traverse)
+	bool contains(int); // search for an element in the tree by key
+	void insert(int); // adding an element to the tree by key
+	void remove(int); // deleting a tree element by key
+	Iterator *create_dft_iterator(); // creating an iterator that implements one of the depth - first traversal methods
+	Iterator *create_bft_iterator(); // creating an iterator that implements breadth - first traversal methods
 	void Heapify(int);
+	class Stack
+	{
+	private:
+		class Element
+		{
+		public:
+			Element(int data, Element* next = nullptr, Element* prev = nullptr) {
+				this->data = data;
+				this->next = next;
+				this->prev = prev;
+			};
+			~Element() {};
+			int data;
+			Element* next;
+			Element* prev;
+		};
+		Element* head;
+		Element* tail;
+		size_t size;
+	public:
+		Stack();
+		~Stack();
+		void reset_stack();
+		void push(int Newelement); // добавление в конец списка
+		void pop(); // удаление последнего элемент
+		int top();
+		bool empty();
+	};
 	class dft_iterator : public Iterator
 	{
 	public:
 		dft_iterator(int* start, int max)
 		{
 			current = start;
-			stack = new int[max];
-			stack[0] =0;
-			last = 0;
 			heapsize = max;
+			stack.push(0);
 		};
 		~dft_iterator()
 		{
 			delete current;
-			delete stack;
 		};
 		int next() override;
 		bool has_next() override;
 	private:
-		int* stack;
+		Stack stack;
 		int* current;
-		int last;
 		int heapsize;
+	};
+	class Queue
+	{
+	private:
+		class Element
+		{
+		public:
+			Element(int data, Element* next = nullptr) {
+				this->data = data;
+				this->next = next;
+			};
+			~Element() {};
+			int data;
+			Element* next;
+		};
+		Element* head;
+		Element* tail;
+		size_t size;
+	public:
+		Queue();
+		~Queue();
+		void reset_queue();
+		void push(int Newelement); // добавление в конец списка
+		void pop(); // удаление последнего элемент
+		int front();
+		bool empty();
 	};
 	class bft_iterator : public Iterator
 	{
 	public:
 		bft_iterator(int* start, int max)
 		{
+			queue.push(0);
 			current = start;
-			queue = new int[max];
-			queue[0] = 0;
-			end = 0;
 			heapsize = max;
 		};
 		~bft_iterator()
 		{
-			delete queue;
 			delete current;
 		};
 		int next() override;
 		bool has_next() override;
 	private:
+		Queue queue;
 		int* current;
-		int* queue;
-		int end;
 		int heapsize;
 	};
 };
